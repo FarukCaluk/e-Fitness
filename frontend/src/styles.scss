@@ -42,6 +42,11 @@ body {
   color: var(--text);
 }
 
+.mat-icon.material-icons,
+mat-icon.material-icons {
+  font-family: 'Material Icons' !important;
+}
+
 .page-title { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
 .page-sub { color: var(--text2); font-size: 14px; margin-bottom: 28px; }
 .dashboard { padding: 28px 32px; }

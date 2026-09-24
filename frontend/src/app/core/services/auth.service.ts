@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthResponse, AuthenticatedUser, LoginRequest, RegisterRequest } from '../models/auth.model';
 import { TokenStorageService } from './token-storage.service';
@@ -34,6 +34,25 @@ export class AuthService {
   logout(): Observable<void> {
     return this.http.post<void>(`${environment.apiUrl}/auth/logout`, {}, { withCredentials: true }).pipe(
       tap(() => this.clearSession())
+    );
+  }
+
+  /**
+   * Attempts to re-establish the in-memory access token from the httpOnly
+   * refresh-token cookie on app bootstrap (e.g. after a page reload).
+   * Never throws — resolves to false if there is no valid session.
+   */
+  tryRestoreSession(): Observable<boolean> {
+    if (!this.tokenStorage.getUser()) {
+      return of(false);
+    }
+
+    return this.refreshToken().pipe(
+      map(() => true),
+      catchError(() => {
+        this.clearSession();
+        return of(false);
+      })
     );
   }
 
