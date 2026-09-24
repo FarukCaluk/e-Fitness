@@ -1,0 +1,14 @@
+# .NET
+backend/**/bin/
+backend/**/obj/
+backend/**/*.user
+backend/**/publish/
+
+# IDE
+.vs/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
