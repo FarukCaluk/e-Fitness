@@ -1,0 +1,37 @@
+<section class="dashboard">
+  <h1 class="page-title">Membership Plans</h1>
+  <p class="page-sub">Choose the plan that fits your training goals.</p>
+
+  <div class="card" *ngIf="currentMembership">
+    <div class="card-title">
+      <span>Current Plan: {{ currentMembership.planName }}</span>
+      <button mat-button color="warn" (click)="cancelMembership()">Cancel Membership</button>
+    </div>
+    <p class="page-sub">Renews on {{ currentMembership.endDate | date: 'longDate' }}</p>
+  </div>
+
+  <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="28"></mat-progress-spinner>
+
+  <div class="grid-3" *ngIf="!isLoading">
+    <div class="card plan-card" [class.featured]="plan.isFeatured" [class.current]="isCurrentPlan(plan)" *ngFor="let plan of plans">
+      <div class="plan-badge" *ngIf="plan.isFeatured">Most Popular</div>
+
+      <div class="plan-name">{{ plan.name }}</div>
+      <p class="plan-price">{{ plan.price | currency: 'BAM ' }} <span>/ {{ plan.durationInDays }} days</span></p>
+
+      <ul class="plan-features">
+        <li *ngFor="let feature of plan.features">{{ feature }}</li>
+      </ul>
+
+      <button
+        mat-raised-button
+        color="primary"
+        class="full-width"
+        [disabled]="isCurrentPlan(plan) || processingPlanId === plan.id"
+        (click)="subscribe(plan)"
+      >
+        {{ isCurrentPlan(plan) ? 'Current Plan' : 'Subscribe' }}
+      </button>
+    </div>
+  </div>
+</section>

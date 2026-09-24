@@ -1,4 +1,32 @@
 <section class="dashboard">
   <h1 class="page-title">My Dashboard</h1>
-  <p class="page-sub">Your membership status, workout plan and progress will be shown here.</p>
+  <p class="page-sub">Your membership, sessions and trainer at a glance.</p>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-label">Membership</div>
+      <div class="stat-value" *ngIf="!isLoading">{{ activeMembership?.planName || 'None' }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Renews</div>
+      <div class="stat-value" *ngIf="!isLoading">{{ (activeMembership?.endDate | date: 'mediumDate') || '—' }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">My Trainer</div>
+      <div class="stat-value" *ngIf="!isLoading">{{ trainerName || 'Unassigned' }}</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Next Session</div>
+
+    <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="28"></mat-progress-spinner>
+
+    <ng-container *ngIf="!isLoading">
+      <p *ngIf="nextSession">
+        {{ nextSession.scheduledAt | date: 'full' }} with {{ nextSession.trainerName }} ({{ nextSession.durationMinutes }} min)
+      </p>
+      <p *ngIf="!nextSession" class="page-sub">No upcoming sessions scheduled.</p>
+    </ng-container>
+  </div>
 </section>
