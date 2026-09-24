@@ -1,0 +1,51 @@
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .grid-3 { grid-template-columns: 1fr; }
+}
+
+.featured {
+  border-color: var(--green);
+}
+
+.plan-price {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--green);
+  margin: 8px 0;
+
+  span {
+    font-size: 13px;
+    color: var(--text2);
+    font-weight: 400;
+  }
+}
+
+.plan-features {
+  list-style: none;
+  margin: 12px 0;
+  padding: 0;
+
+  li {
+    padding: 4px 0;
+    font-size: 13px;
+    color: var(--text2);
+
+    &::before {
+      content: '✓';
+      color: var(--green);
+      font-weight: 700;
+      margin-right: 6px;
+    }
+  }
+}
+
+.plan-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}

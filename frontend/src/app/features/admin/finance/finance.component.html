@@ -1,0 +1,70 @@
+<section class="dashboard">
+  <h1 class="page-title">Finance</h1>
+  <p class="page-sub">Payment history across memberships and orders.</p>
+
+  <div class="card">
+    <div class="search-bar">
+      <mat-form-field appearance="outline" style="min-width: 200px;">
+        <mat-label>Status</mat-label>
+        <mat-select [(ngModel)]="statusFilter" (selectionChange)="onFilterChange()">
+          <mat-option value="">All</mat-option>
+          <mat-option *ngFor="let status of statuses" [value]="status">{{ status }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <table mat-table [dataSource]="payments" class="mat-elevation-z0">
+      <ng-container matColumnDef="member">
+        <th mat-header-cell *matHeaderCellDef>Member</th>
+        <td mat-cell *matCellDef="let payment">{{ payment.memberName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef>Amount</th>
+        <td mat-cell *matCellDef="let payment">{{ payment.amount | currency: 'BAM ' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="method">
+        <th mat-header-cell *matHeaderCellDef>Method</th>
+        <td mat-cell *matCellDef="let payment">{{ payment.method }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="purpose">
+        <th mat-header-cell *matHeaderCellDef>Purpose</th>
+        <td mat-cell *matCellDef="let payment">{{ payment.purpose }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let payment">
+          <span
+            class="badge"
+            [class.badge-green]="payment.status === 'Completed'"
+            [class.badge-amber]="payment.status === 'Pending'"
+            [class.badge-red]="payment.status === 'Failed' || payment.status === 'Refunded'"
+          >
+            {{ payment.status }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef>Date</th>
+        <td mat-cell *matCellDef="let payment">{{ payment.paymentDate | date: 'medium' }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <p *ngIf="!isLoading && payments.length === 0" class="page-sub">No payments found.</p>
+
+    <mat-paginator
+      [length]="totalCount"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[10, 20, 50]"
+      [pageIndex]="pageNumber - 1"
+      (page)="onPageChange($event)"
+    ></mat-paginator>
+  </div>
+</section>

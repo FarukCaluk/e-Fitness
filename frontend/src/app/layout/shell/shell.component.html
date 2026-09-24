@@ -1,0 +1,37 @@
+<div class="shell">
+  <nav class="sidebar">
+    <div class="sidebar-logo">e<span>Fitness</span></div>
+
+    <div class="sidebar-user">
+      <div class="avatar">{{ initials }}</div>
+      <div class="sidebar-user-info">
+        <div class="name">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</div>
+        <div class="role">{{ currentUser?.role }}</div>
+      </div>
+    </div>
+
+    <div class="nav">
+      <a
+        *ngFor="let item of navItems"
+        class="nav-item"
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: item.path === '' }"
+      >
+        <mat-icon>{{ item.icon }}</mat-icon>
+        <span>{{ item.label }}</span>
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="logout-btn" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Sign Out</span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

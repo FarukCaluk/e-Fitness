@@ -1,0 +1,36 @@
+<section class="dashboard">
+  <div class="card-title">
+    <div>
+      <h1 class="page-title">Membership Plans</h1>
+      <p class="page-sub">Configure the plans members can subscribe to.</p>
+    </div>
+    <button mat-raised-button color="primary" (click)="create()">Add Plan</button>
+  </div>
+
+  <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="28"></mat-progress-spinner>
+
+  <div class="grid-3">
+    <div class="card" *ngFor="let plan of plans" [class.featured]="plan.isFeatured">
+      <div class="card-title">
+        <span>{{ plan.name }}</span>
+        <span class="badge" [class.badge-green]="plan.isActive" [class.badge-red]="!plan.isActive">
+          {{ plan.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </div>
+
+      <p class="plan-price">{{ plan.price | currency: 'BAM ' }} <span>/ {{ plan.durationInDays }} days</span></p>
+      <p class="page-sub">{{ plan.description }}</p>
+
+      <ul class="plan-features">
+        <li *ngFor="let feature of plan.features">{{ feature }}</li>
+      </ul>
+
+      <div class="plan-actions">
+        <button mat-button color="primary" (click)="edit(plan)">Edit</button>
+        <button mat-button color="warn" (click)="remove(plan)">Deactivate</button>
+      </div>
+    </div>
+  </div>
+
+  <p *ngIf="!isLoading && plans.length === 0" class="page-sub">No membership plans yet.</p>
+</section>

@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit Plan' : 'Add Plan' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="form-grid">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="2"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Price (BAM)</mat-label>
+      <input matInput type="number" formControlName="price" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Duration (days)</mat-label>
+      <input matInput type="number" formControlName="durationInDays" />
+    </mat-form-field>
+
+    <mat-checkbox formControlName="isFeatured">Featured plan</mat-checkbox>
+    <mat-checkbox *ngIf="isEditMode" formControlName="isActive">Active</mat-checkbox>
+
+    <div class="full-width">
+      <div class="features-header">
+        <span>Features</span>
+        <button mat-button type="button" (click)="addFeature()">+ Add feature</button>
+      </div>
+
+      <div formArrayName="features" class="feature-row" *ngFor="let feature of features.controls; let i = index">
+        <mat-form-field appearance="outline" class="full-width">
+          <input matInput [formControlName]="i" placeholder="Feature description" />
+        </mat-form-field>
+        <button mat-icon-button type="button" (click)="removeFeature(i)"><mat-icon>close</mat-icon></button>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="isSaving" (click)="save()">Save</button>
+</mat-dialog-actions>

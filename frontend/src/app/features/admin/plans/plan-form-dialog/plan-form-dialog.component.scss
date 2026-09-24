@@ -1,0 +1,28 @@
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 16px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.features-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: var(--text2, #666);
+  margin-bottom: 4px;
+}
+
+.feature-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  .full-width {
+    flex: 1;
+  }
+}

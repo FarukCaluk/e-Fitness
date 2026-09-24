@@ -1,0 +1,73 @@
+<section class="dashboard">
+  <h1 class="page-title">Members</h1>
+  <p class="page-sub">Manage member profiles, trainers and memberships.</p>
+
+  <div class="card">
+    <div class="search-bar">
+      <mat-form-field appearance="outline" style="flex: 1; min-width: 220px;">
+        <mat-label>Search by name or email</mat-label>
+        <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" style="min-width: 200px;">
+        <mat-label>Membership status</mat-label>
+        <mat-select [(ngModel)]="statusFilter" (selectionChange)="onSearchChange()">
+          <mat-option value="">All</mat-option>
+          <mat-option *ngFor="let status of statuses" [value]="status">{{ status }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <table mat-table [dataSource]="members" class="mat-elevation-z0">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let member">{{ member.fullName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="contact">
+        <th mat-header-cell *matHeaderCellDef>Contact</th>
+        <td mat-cell *matCellDef="let member">{{ member.email }}<br />{{ member.phoneNumber }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="plan">
+        <th mat-header-cell *matHeaderCellDef>Plan</th>
+        <td mat-cell *matCellDef="let member">
+          <span class="badge badge-green" *ngIf="member.currentMembershipStatus === 'Active'; else noPlan">
+            {{ member.currentPlanName }}
+          </span>
+          <ng-template #noPlan><span class="badge badge-amber">No active plan</span></ng-template>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="trainer">
+        <th mat-header-cell *matHeaderCellDef>Trainer</th>
+        <td mat-cell *matCellDef="let member">{{ member.assignedTrainerName || '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="joined">
+        <th mat-header-cell *matHeaderCellDef>Joined</th>
+        <td mat-cell *matCellDef="let member">{{ member.joinDate | date: 'mediumDate' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let member">
+          <button mat-button color="primary" (click)="edit(member)">Edit</button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <p *ngIf="!isLoading && members.length === 0" class="page-sub">No members found.</p>
+
+    <mat-paginator
+      [length]="totalCount"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[10, 20, 50]"
+      [pageIndex]="pageNumber - 1"
+      (page)="onPageChange($event)"
+    ></mat-paginator>
+  </div>
+</section>

@@ -1,0 +1,59 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit Trainer' : 'Add Trainer' }}</h2>
+
+<mat-dialog-content>
+  <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="28"></mat-progress-spinner>
+
+  <form *ngIf="!isLoading" [formGroup]="form" class="form-grid">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width" *ngIf="!isEditMode">
+      <mat-label>Password</mat-label>
+      <input matInput type="password" formControlName="password" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>First name</mat-label>
+      <input matInput formControlName="firstName" [readonly]="isEditMode" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Last name</mat-label>
+      <input matInput formControlName="lastName" [readonly]="isEditMode" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width" *ngIf="!isEditMode">
+      <mat-label>Phone number</mat-label>
+      <input matInput formControlName="phoneNumber" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Specialization</mat-label>
+      <input matInput formControlName="specialization" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Bio</mat-label>
+      <textarea matInput formControlName="bio" rows="2"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Years of experience</mat-label>
+      <input matInput type="number" formControlName="yearsOfExperience" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Hourly rate (BAM)</mat-label>
+      <input matInput type="number" formControlName="hourlyRate" />
+    </mat-form-field>
+
+    <mat-checkbox *ngIf="isEditMode" formControlName="isAvailable" class="full-width">Available for new clients</mat-checkbox>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="isLoading || isSaving" (click)="save()">Save</button>
+</mat-dialog-actions>

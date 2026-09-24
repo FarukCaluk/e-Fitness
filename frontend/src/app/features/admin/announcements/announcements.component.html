@@ -1,0 +1,45 @@
+<section class="dashboard">
+  <div class="card-title">
+    <div>
+      <h1 class="page-title">Announcements</h1>
+      <p class="page-sub">Broadcast news to members and trainers.</p>
+    </div>
+    <button mat-raised-button color="primary" (click)="showForm = !showForm">
+      {{ showForm ? 'Cancel' : 'New Announcement' }}
+    </button>
+  </div>
+
+  <div class="card" *ngIf="showForm">
+    <form [formGroup]="form" class="form-grid">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Message</mat-label>
+        <textarea matInput formControlName="body" rows="3"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Audience</mat-label>
+        <mat-select formControlName="segment">
+          <mat-option *ngFor="let segment of segments" [value]="segment">{{ segment }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </form>
+
+    <button mat-raised-button color="primary" [disabled]="isSaving" (click)="submit()">Publish</button>
+  </div>
+
+  <div class="card" *ngFor="let announcement of announcements">
+    <div class="card-title">
+      <span>{{ announcement.title }}</span>
+      <span class="badge badge-blue">{{ announcement.segment }}</span>
+    </div>
+    <p class="page-sub" style="margin-bottom: 6px;">{{ announcement.body }}</p>
+    <small>{{ announcement.authorName }} · {{ announcement.createdAt | date: 'medium' }}</small>
+  </div>
+
+  <p *ngIf="!isLoading && announcements.length === 0" class="page-sub">No announcements yet.</p>
+</section>

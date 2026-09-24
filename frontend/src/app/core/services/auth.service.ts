@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AuthResponse, AuthenticatedUser, LoginRequest } from '../models/auth.model';
+import { AuthResponse, AuthenticatedUser, LoginRequest, RegisterRequest } from '../models/auth.model';
 import { TokenStorageService } from './token-storage.service';
 
 @Injectable({ providedIn: 'root' })
@@ -13,6 +13,10 @@ export class AuthService {
   constructor(private readonly http: HttpClient, private readonly tokenStorage: TokenStorageService) {
     this.currentUserSubject = new BehaviorSubject<AuthenticatedUser | null>(this.tokenStorage.getUser());
     this.currentUser$ = this.currentUserSubject.asObservable();
+  }
+
+  register(request: RegisterRequest): Observable<{ id: number }> {
+    return this.http.post<{ id: number }>(`${environment.apiUrl}/auth/register`, request);
   }
 
   login(request: LoginRequest): Observable<AuthResponse> {

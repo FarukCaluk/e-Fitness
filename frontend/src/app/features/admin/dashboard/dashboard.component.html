@@ -1,4 +1,38 @@
 <section class="dashboard">
   <h1 class="page-title">Admin Dashboard</h1>
-  <p class="page-sub">Overview of members, trainers and revenue will be shown here.</p>
+  <p class="page-sub">Overview of members, trainers and gym activity.</p>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total Members</div>
+      <div class="stat-value">{{ isLoading ? '—' : totalMembers }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Active Trainers</div>
+      <div class="stat-value">{{ isLoading ? '—' : totalTrainers }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Active Memberships</div>
+      <div class="stat-value">{{ isLoading ? '—' : activeMemberships }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Pending Orders</div>
+      <div class="stat-value">{{ isLoading ? '—' : pendingOrders }}</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Recent Announcements</div>
+
+    <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="28"></mat-progress-spinner>
+
+    <mat-list *ngIf="!isLoading">
+      <mat-list-item *ngFor="let announcement of recentAnnouncements">
+        <span matListItemTitle>{{ announcement.title }}</span>
+        <span matListItemLine>{{ announcement.body }}</span>
+      </mat-list-item>
+
+      <p *ngIf="recentAnnouncements.length === 0" class="page-sub">No announcements yet.</p>
+    </mat-list>
+  </div>
 </section>

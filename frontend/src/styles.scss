@@ -1,19 +1,11 @@
-
-// Custom Theming for Angular Material
-// For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
-// Plus imports for other components in your app.
 
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
-// Be sure that you only ever include this mixin once!
 @include mat.core();
 
-// Define the theme object.
 $frontend-theme: mat.define-theme((
   color: (
-    theme-type: light,
-    primary: mat.$azure-palette,
+    theme-type: dark,
+    primary: mat.$green-palette,
     tertiary: mat.$blue-palette,
   ),
   density: (
@@ -21,24 +13,107 @@ $frontend-theme: mat.define-theme((
   )
 ));
 
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
 :root {
   @include mat.all-component-themes($frontend-theme);
+
+  --green: #39d353;
+  --green-dim: #1f7a2e;
+  --green-glow: rgba(57, 211, 83, 0.15);
+  --bg: #0f0f0f;
+  --bg2: #181818;
+  --bg3: #222222;
+  --bg4: #2a2a2a;
+  --text: #f0f0f0;
+  --text2: #aaaaaa;
+  --text3: #666666;
+  --border: #2e2e2e;
+  --red: #e74c3c;
+  --amber: #f0a500;
+  --blue: #3b82f6;
+  --radius: 10px;
 }
 
-// Comment out the line below if you want to use the pre-defined typography utility classes.
-// For more information: https://material.angular.io/guide/typography#using-typography-styles-in-your-application.
-// @include mat.typography-hierarchy($frontend-theme);
-
-// Comment out the line below if you want to use the deprecated `color` inputs.
-// @include mat.color-variants-backwards-compatibility($frontend-theme);
-/* You can add global styles to this file, and also import other style files */
-
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
 
 .page-title { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
-.page-sub { color: rgba(0, 0, 0, 0.6); font-size: 14px; margin-bottom: 28px; }
+.page-sub { color: var(--text2); font-size: 14px; margin-bottom: 28px; }
 .dashboard { padding: 28px 32px; }
+
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  margin-bottom: 20px;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+@media (max-width: 900px) {
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.stat-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.stat-value { font-size: 28px; font-weight: 700; }
+.stat-change { font-size: 12px; color: var(--green); margin-top: 4px; }
+.stat-change.down { color: var(--red); }
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.badge-green { background: rgba(57, 211, 83, 0.15); color: var(--green); }
+.badge-red { background: rgba(231, 76, 60, 0.15); color: var(--red); }
+.badge-amber { background: rgba(240, 165, 0, 0.15); color: var(--amber); }
+.badge-blue { background: rgba(59, 130, 246, 0.15); color: var(--blue); }
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
