@@ -16,7 +16,7 @@ public interface IApplicationDbContext
     DbSet<WorkoutPlan> WorkoutPlans { get; }
     DbSet<WorkoutPlanExercise> WorkoutPlanExercises { get; }
     DbSet<Exercise> Exercises { get; }
-    DbSet<Equipment> Equipment { get; }
+    DbSet<Domain.Entities.Equipment> Equipment { get; }
     DbSet<Product> Products { get; }
     DbSet<Order> Orders { get; }
     DbSet<OrderItem> OrderItems { get; }
