@@ -2,6 +2,7 @@ import { MembershipStatus } from './enums.model';
 
 export interface MemberListItem {
   id: number;
+  userId: number;
   fullName: string;
   email: string;
   phoneNumber?: string | null;
@@ -14,6 +15,7 @@ export interface MemberListItem {
 
 export interface MemberDetail {
   id: number;
+  userId: number;
   firstName: string;
   lastName: string;
   email: string;

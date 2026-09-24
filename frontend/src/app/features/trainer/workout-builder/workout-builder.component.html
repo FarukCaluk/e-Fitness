@@ -1,0 +1,122 @@
+<section class="dashboard">
+  <h1 class="page-title">Workout Builder</h1>
+  <p class="page-sub">Create weekly workout plans for your clients.</p>
+
+  <div class="card">
+    <form [formGroup]="form">
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Client</mat-label>
+          <mat-select formControlName="memberId">
+            <mat-option *ngFor="let client of clients" [value]="client.id">{{ client.fullName }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Title</mat-label>
+          <input matInput formControlName="title" placeholder="e.g. Strength Foundations" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Start date</mat-label>
+          <input matInput [matDatepicker]="startPicker" formControlName="startDate" />
+          <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+          <mat-datepicker #startPicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>End date (optional)</mat-label>
+          <input matInput [matDatepicker]="endPicker" formControlName="endDate" />
+          <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+          <mat-datepicker #endPicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="2"></textarea>
+        </mat-form-field>
+      </div>
+
+      <div class="exercises-header">
+        <span>Exercises</span>
+        <button mat-button type="button" (click)="addExerciseRow()">+ Add Exercise</button>
+      </div>
+
+      <div formArrayName="exercises">
+        <div class="exercise-row" *ngFor="let row of exerciseRows.controls; let i = index" [formGroupName]="i">
+          <mat-form-field appearance="outline">
+            <mat-label>Exercise</mat-label>
+            <mat-select formControlName="exerciseId">
+              <mat-option *ngFor="let exercise of exercises" [value]="exercise.id">{{ exercise.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Day</mat-label>
+            <mat-select formControlName="dayOfWeek">
+              <mat-option *ngFor="let day of daysOfWeek" [value]="day">{{ day }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Sets</mat-label>
+            <input matInput type="number" formControlName="setsCount" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Reps</mat-label>
+            <input matInput type="number" formControlName="repsCount" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Rest (sec)</mat-label>
+            <input matInput type="number" formControlName="restSeconds" />
+          </mat-form-field>
+
+          <button mat-icon-button type="button" (click)="removeExerciseRow(i)"><mat-icon>close</mat-icon></button>
+        </div>
+      </div>
+
+      <button mat-raised-button color="primary" [disabled]="isSaving" (click)="submit()">Save Plan</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-title">My Workout Plans</div>
+
+    <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="28"></mat-progress-spinner>
+
+    <table mat-table [dataSource]="plans" class="mat-elevation-z0" *ngIf="!isLoading">
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef>Title</th>
+        <td mat-cell *matCellDef="let plan">{{ plan.title }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="client">
+        <th mat-header-cell *matHeaderCellDef>Client</th>
+        <td mat-cell *matCellDef="let plan">{{ plan.memberName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let plan">
+          <span class="badge" [class.badge-green]="plan.isActive" [class.badge-red]="!plan.isActive">
+            {{ plan.isActive ? 'Active' : 'Inactive' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let plan">
+          <button mat-button color="warn" (click)="deletePlan(plan)">Delete</button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['title', 'client', 'status', 'actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['title', 'client', 'status', 'actions']"></tr>
+    </table>
+
+    <p *ngIf="!isLoading && plans.length === 0" class="page-sub">No workout plans yet.</p>
+  </div>
+</section>

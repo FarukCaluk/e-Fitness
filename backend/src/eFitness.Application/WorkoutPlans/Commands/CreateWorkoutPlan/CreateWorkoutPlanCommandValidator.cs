@@ -6,7 +6,7 @@ public class CreateWorkoutPlanCommandValidator : AbstractValidator<CreateWorkout
 {
     public CreateWorkoutPlanCommandValidator()
     {
-        RuleFor(x => x.TrainerId).GreaterThan(0);
+        RuleFor(x => x.TrainerId).GreaterThanOrEqualTo(0);
         RuleFor(x => x.MemberId).GreaterThan(0);
         RuleFor(x => x.Title).NotEmpty().MaximumLength(150);
         RuleFor(x => x.Description).MaximumLength(1000);

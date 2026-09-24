@@ -4,6 +4,7 @@ namespace eFitness.Application.Trainers;
 
 public record TrainerListItemDto(
     int Id,
+    int UserId,
     string FullName,
     string Email,
     string Specialization,
@@ -14,6 +15,7 @@ public record TrainerListItemDto(
 {
     public static TrainerListItemDto FromEntity(Trainer trainer) => new(
         trainer.Id,
+        trainer.UserId,
         $"{trainer.User.FirstName} {trainer.User.LastName}",
         trainer.User.Email,
         trainer.Specialization,
@@ -25,6 +27,7 @@ public record TrainerListItemDto(
 
 public record TrainerDetailDto(
     int Id,
+    int UserId,
     string FirstName,
     string LastName,
     string Email,
@@ -38,6 +41,7 @@ public record TrainerDetailDto(
 {
     public static TrainerDetailDto FromEntity(Trainer trainer) => new(
         trainer.Id,
+        trainer.UserId,
         trainer.User.FirstName,
         trainer.User.LastName,
         trainer.User.Email,

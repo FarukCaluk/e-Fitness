@@ -1,0 +1,57 @@
+<section class="dashboard">
+  <h1 class="page-title">Messages</h1>
+  <p class="page-sub">Chat directly with your trainer or clients.</p>
+
+  <div class="chat-layout">
+    <div class="chat-sidebar">
+      <div class="contacts-section" *ngIf="contacts.length > 0">
+        <div class="section-label">Start a conversation</div>
+        <div class="contact-row" *ngFor="let contact of contacts" (click)="startConversationWith(contact)">
+          {{ contact.name }}
+        </div>
+      </div>
+
+      <div class="section-label">Conversations</div>
+      <mat-progress-spinner *ngIf="isLoadingConversations" mode="indeterminate" diameter="24"></mat-progress-spinner>
+
+      <div
+        class="conversation-row"
+        *ngFor="let conversation of conversations"
+        [class.active]="conversation.id === selectedConversationId"
+        (click)="openConversation(conversation.id)"
+      >
+        <div class="name">
+          {{ conversation.otherParticipantName }}
+          <span class="badge badge-green" *ngIf="conversation.unreadCount > 0">{{ conversation.unreadCount }}</span>
+        </div>
+        <div class="preview">{{ conversation.lastMessagePreview }}</div>
+      </div>
+
+      <p *ngIf="!isLoadingConversations && conversations.length === 0" class="page-sub">No conversations yet.</p>
+    </div>
+
+    <div class="chat-main">
+      <ng-container *ngIf="selectedConversationId; else noSelection">
+        <div class="messages">
+          <mat-progress-spinner *ngIf="isLoadingMessages" mode="indeterminate" diameter="24"></mat-progress-spinner>
+
+          <div class="message" *ngFor="let message of messages" [class.mine]="isMine(message)">
+            <div class="bubble">{{ message.content }}</div>
+            <div class="time">{{ message.sentAt | date: 'short' }}</div>
+          </div>
+        </div>
+
+        <div class="message-input">
+          <mat-form-field appearance="outline" style="flex: 1;">
+            <input matInput [(ngModel)]="newMessage" (keyup.enter)="send()" placeholder="Type a message…" />
+          </mat-form-field>
+          <button mat-icon-button color="primary" (click)="send()"><mat-icon>send</mat-icon></button>
+        </div>
+      </ng-container>
+
+      <ng-template #noSelection>
+        <div class="empty-state">Select a conversation to start chatting.</div>
+      </ng-template>
+    </div>
+  </div>
+</section>

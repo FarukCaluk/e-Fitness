@@ -1,4 +1,30 @@
 <section class="dashboard">
   <h1 class="page-title">Trainer Dashboard</h1>
-  <p class="page-sub">Assigned clients and upcoming sessions will be shown here.</p>
+  <p class="page-sub">Your clients and upcoming sessions.</p>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-label">My Clients</div>
+      <div class="stat-value">{{ isLoading ? '—' : totalClients }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Upcoming Sessions</div>
+      <div class="stat-value">{{ isLoading ? '—' : upcomingSessions.length }}</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Upcoming Sessions</div>
+
+    <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="28"></mat-progress-spinner>
+
+    <mat-list *ngIf="!isLoading">
+      <mat-list-item *ngFor="let session of upcomingSessions">
+        <span matListItemTitle>{{ session.memberName }}</span>
+        <span matListItemLine>{{ session.scheduledAt | date: 'medium' }} · {{ session.durationMinutes }} min</span>
+      </mat-list-item>
+
+      <p *ngIf="upcomingSessions.length === 0" class="page-sub">No upcoming sessions scheduled.</p>
+    </mat-list>
+  </div>
 </section>

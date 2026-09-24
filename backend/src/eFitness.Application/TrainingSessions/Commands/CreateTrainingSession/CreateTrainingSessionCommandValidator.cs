@@ -6,7 +6,7 @@ public class CreateTrainingSessionCommandValidator : AbstractValidator<CreateTra
 {
     public CreateTrainingSessionCommandValidator()
     {
-        RuleFor(x => x.TrainerId).GreaterThan(0);
+        RuleFor(x => x.TrainerId).GreaterThanOrEqualTo(0);
         RuleFor(x => x.MemberId).GreaterThan(0);
         RuleFor(x => x.ScheduledAt).GreaterThan(DateTime.UtcNow);
         RuleFor(x => x.DurationMinutes).InclusiveBetween(15, 240);

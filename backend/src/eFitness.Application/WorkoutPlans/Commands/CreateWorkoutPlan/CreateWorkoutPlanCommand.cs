@@ -1,6 +1,7 @@
 using eFitness.Application.Common.Exceptions;
 using eFitness.Application.Common.Interfaces;
 using eFitness.Domain.Entities;
+using eFitness.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,18 +19,36 @@ public record CreateWorkoutPlanCommand(
 public class CreateWorkoutPlanCommandHandler : IRequestHandler<CreateWorkoutPlanCommand, int>
 {
     private readonly IApplicationDbContext _context;
+    private readonly ICurrentUserService _currentUserService;
 
-    public CreateWorkoutPlanCommandHandler(IApplicationDbContext context)
+    public CreateWorkoutPlanCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
     {
         _context = context;
+        _currentUserService = currentUserService;
     }
 
     public async Task<int> Handle(CreateWorkoutPlanCommand request, CancellationToken cancellationToken)
     {
-        var trainerExists = await _context.Trainers.AnyAsync(t => t.Id == request.TrainerId, cancellationToken);
-        if (!trainerExists)
+        var trainerId = request.TrainerId;
+
+        if (_currentUserService.Role == UserRole.Trainer)
         {
-            throw new NotFoundException(nameof(Trainer), request.TrainerId);
+            var trainer = await _context.Trainers.FirstOrDefaultAsync(t => t.UserId == _currentUserService.UserId, cancellationToken);
+
+            if (trainer is null)
+            {
+                throw new ForbiddenAccessException();
+            }
+
+            trainerId = trainer.Id;
+        }
+        else
+        {
+            var trainerExists = await _context.Trainers.AnyAsync(t => t.Id == trainerId, cancellationToken);
+            if (!trainerExists)
+            {
+                throw new NotFoundException(nameof(Trainer), trainerId);
+            }
         }
 
         var memberExists = await _context.Members.AnyAsync(m => m.Id == request.MemberId, cancellationToken);
@@ -40,7 +59,7 @@ public class CreateWorkoutPlanCommandHandler : IRequestHandler<CreateWorkoutPlan
 
         var plan = new WorkoutPlan
         {
-            TrainerId = request.TrainerId,
+            TrainerId = trainerId,
             MemberId = request.MemberId,
             Title = request.Title,
             Description = request.Description,

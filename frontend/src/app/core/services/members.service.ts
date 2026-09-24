@@ -28,6 +28,14 @@ export class MembersService {
     return this.http.get<MemberDetail>(`${this.baseUrl}/${id}`);
   }
 
+  getMyProfile(): Observable<MemberDetail> {
+    return this.http.get<MemberDetail>(`${this.baseUrl}/me`);
+  }
+
+  getMyClients(filter: { pageNumber?: number; pageSize?: number; searchTerm?: string }): Observable<PaginatedList<MemberListItem>> {
+    return this.http.get<PaginatedList<MemberListItem>>(`${this.baseUrl}/my-clients`, { params: buildHttpParams(filter) });
+  }
+
   updateMember(id: number, request: UpdateMemberRequest): Observable<void> {
     return this.http.put<void>(`${this.baseUrl}/${id}`, request);
   }

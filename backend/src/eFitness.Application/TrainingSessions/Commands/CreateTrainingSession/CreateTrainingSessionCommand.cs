@@ -18,18 +18,36 @@ public record CreateTrainingSessionCommand(
 public class CreateTrainingSessionCommandHandler : IRequestHandler<CreateTrainingSessionCommand, int>
 {
     private readonly IApplicationDbContext _context;
+    private readonly ICurrentUserService _currentUserService;
 
-    public CreateTrainingSessionCommandHandler(IApplicationDbContext context)
+    public CreateTrainingSessionCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
     {
         _context = context;
+        _currentUserService = currentUserService;
     }
 
     public async Task<int> Handle(CreateTrainingSessionCommand request, CancellationToken cancellationToken)
     {
-        var trainerExists = await _context.Trainers.AnyAsync(t => t.Id == request.TrainerId, cancellationToken);
-        if (!trainerExists)
+        var trainerId = request.TrainerId;
+
+        if (_currentUserService.Role == UserRole.Trainer)
         {
-            throw new NotFoundException(nameof(Trainer), request.TrainerId);
+            var trainer = await _context.Trainers.FirstOrDefaultAsync(t => t.UserId == _currentUserService.UserId, cancellationToken);
+
+            if (trainer is null)
+            {
+                throw new ForbiddenAccessException();
+            }
+
+            trainerId = trainer.Id;
+        }
+        else
+        {
+            var trainerExists = await _context.Trainers.AnyAsync(t => t.Id == trainerId, cancellationToken);
+            if (!trainerExists)
+            {
+                throw new NotFoundException(nameof(Trainer), trainerId);
+            }
         }
 
         var memberExists = await _context.Members.AnyAsync(m => m.Id == request.MemberId, cancellationToken);
@@ -40,7 +58,7 @@ public class CreateTrainingSessionCommandHandler : IRequestHandler<CreateTrainin
 
         var session = new TrainingSession
         {
-            TrainerId = request.TrainerId,
+            TrainerId = trainerId,
             MemberId = request.MemberId,
             ScheduledAt = request.ScheduledAt,
             DurationMinutes = request.DurationMinutes,

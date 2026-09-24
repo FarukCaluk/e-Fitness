@@ -18,10 +18,12 @@ public record GetTrainingSessionsQuery(
 public class GetTrainingSessionsQueryHandler : IRequestHandler<GetTrainingSessionsQuery, PaginatedList<TrainingSessionDto>>
 {
     private readonly IApplicationDbContext _context;
+    private readonly ICurrentUserService _currentUserService;
 
-    public GetTrainingSessionsQueryHandler(IApplicationDbContext context)
+    public GetTrainingSessionsQueryHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
     {
         _context = context;
+        _currentUserService = currentUserService;
     }
 
     public async Task<PaginatedList<TrainingSessionDto>> Handle(GetTrainingSessionsQuery request, CancellationToken cancellationToken)
@@ -31,14 +33,28 @@ public class GetTrainingSessionsQueryHandler : IRequestHandler<GetTrainingSessio
             .Include(s => s.Member).ThenInclude(m => m.User)
             .AsQueryable();
 
-        if (request.TrainerId is not null)
+        var trainerIdFilter = request.TrainerId;
+        var memberIdFilter = request.MemberId;
+
+        if (_currentUserService.Role == UserRole.Trainer)
         {
-            query = query.Where(s => s.TrainerId == request.TrainerId);
+            var trainer = await _context.Trainers.FirstOrDefaultAsync(t => t.UserId == _currentUserService.UserId, cancellationToken);
+            trainerIdFilter = trainer?.Id ?? -1;
+        }
+        else if (_currentUserService.Role == UserRole.Client)
+        {
+            var member = await _context.Members.FirstOrDefaultAsync(m => m.UserId == _currentUserService.UserId, cancellationToken);
+            memberIdFilter = member?.Id ?? -1;
         }
 
-        if (request.MemberId is not null)
+        if (trainerIdFilter is not null)
         {
-            query = query.Where(s => s.MemberId == request.MemberId);
+            query = query.Where(s => s.TrainerId == trainerIdFilter);
+        }
+
+        if (memberIdFilter is not null)
+        {
+            query = query.Where(s => s.MemberId == memberIdFilter);
         }
 
         if (request.Status is not null)

@@ -5,6 +5,7 @@ namespace eFitness.Application.Members;
 
 public record MemberListItemDto(
     int Id,
+    int UserId,
     string FullName,
     string Email,
     string? PhoneNumber,
@@ -23,6 +24,7 @@ public record MemberListItemDto(
 
         return new MemberListItemDto(
             member.Id,
+            member.UserId,
             $"{member.User.FirstName} {member.User.LastName}",
             member.User.Email,
             member.User.PhoneNumber,
@@ -36,6 +38,7 @@ public record MemberListItemDto(
 
 public record MemberDetailDto(
     int Id,
+    int UserId,
     string FirstName,
     string LastName,
     string Email,
@@ -51,6 +54,7 @@ public record MemberDetailDto(
 {
     public static MemberDetailDto FromEntity(Member member) => new(
         member.Id,
+        member.UserId,
         member.User.FirstName,
         member.User.LastName,
         member.User.Email,

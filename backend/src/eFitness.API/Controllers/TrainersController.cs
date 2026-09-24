@@ -4,6 +4,7 @@ using eFitness.Application.Trainers;
 using eFitness.Application.Trainers.Commands.CreateTrainer;
 using eFitness.Application.Trainers.Commands.DeleteTrainer;
 using eFitness.Application.Trainers.Commands.UpdateTrainer;
+using eFitness.Application.Trainers.Queries.GetMyTrainerProfile;
 using eFitness.Application.Trainers.Queries.GetTrainerById;
 using eFitness.Application.Trainers.Queries.GetTrainers;
 using MediatR;
@@ -33,6 +34,14 @@ public class TrainersController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         var result = await _sender.Send(new GetTrainersQuery(pageNumber, pageSize, searchTerm, isAvailable), cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpGet("me")]
+    [Authorize(Roles = "Trainer")]
+    public async Task<ActionResult<TrainerDetailDto>> GetMyProfile(CancellationToken cancellationToken)
+    {
+        var result = await _sender.Send(new GetMyTrainerProfileQuery(), cancellationToken);
         return Ok(result);
     }
 

@@ -4,6 +4,8 @@ using eFitness.Application.Members;
 using eFitness.Application.Members.Commands.UpdateMember;
 using eFitness.Application.Members.Queries.GetMemberById;
 using eFitness.Application.Members.Queries.GetMembers;
+using eFitness.Application.Members.Queries.GetMyClients;
+using eFitness.Application.Members.Queries.GetMyMemberProfile;
 using eFitness.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +15,7 @@ namespace eFitness.API.Controllers;
 
 [ApiController]
 [Route("api/members")]
-[Authorize(Roles = "Admin")]
+[Authorize]
 public class MembersController : ControllerBase
 {
     private readonly ISender _sender;
@@ -24,6 +26,7 @@ public class MembersController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<PaginatedList<MemberListItemDto>>> GetMembers(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
@@ -38,7 +41,28 @@ public class MembersController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("me")]
+    [Authorize(Roles = "Client")]
+    public async Task<ActionResult<MemberDetailDto>> GetMyProfile(CancellationToken cancellationToken)
+    {
+        var result = await _sender.Send(new GetMyMemberProfileQuery(), cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpGet("my-clients")]
+    [Authorize(Roles = "Trainer")]
+    public async Task<ActionResult<PaginatedList<MemberListItemDto>>> GetMyClients(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? searchTerm = null,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await _sender.Send(new GetMyClientsQuery(pageNumber, pageSize, searchTerm), cancellationToken);
+        return Ok(result);
+    }
+
     [HttpGet("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<MemberDetailDto>> GetMember(int id, CancellationToken cancellationToken)
     {
         var result = await _sender.Send(new GetMemberByIdQuery(id), cancellationToken);
@@ -46,6 +70,7 @@ public class MembersController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateMember(int id, UpdateMemberRequest request, CancellationToken cancellationToken)
     {
         await _sender.Send(

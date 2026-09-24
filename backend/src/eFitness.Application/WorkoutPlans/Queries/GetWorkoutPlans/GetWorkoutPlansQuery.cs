@@ -1,5 +1,6 @@
 using eFitness.Application.Common.Interfaces;
 using eFitness.Application.Common.Models;
+using eFitness.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +12,12 @@ public record GetWorkoutPlansQuery(int PageNumber, int PageSize, int? TrainerId,
 public class GetWorkoutPlansQueryHandler : IRequestHandler<GetWorkoutPlansQuery, PaginatedList<WorkoutPlanListItemDto>>
 {
     private readonly IApplicationDbContext _context;
+    private readonly ICurrentUserService _currentUserService;
 
-    public GetWorkoutPlansQueryHandler(IApplicationDbContext context)
+    public GetWorkoutPlansQueryHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
     {
         _context = context;
+        _currentUserService = currentUserService;
     }
 
     public async Task<PaginatedList<WorkoutPlanListItemDto>> Handle(GetWorkoutPlansQuery request, CancellationToken cancellationToken)
@@ -24,14 +27,28 @@ public class GetWorkoutPlansQueryHandler : IRequestHandler<GetWorkoutPlansQuery,
             .Include(p => p.Member).ThenInclude(m => m.User)
             .AsQueryable();
 
-        if (request.TrainerId is not null)
+        var trainerIdFilter = request.TrainerId;
+        var memberIdFilter = request.MemberId;
+
+        if (_currentUserService.Role == UserRole.Trainer)
         {
-            query = query.Where(p => p.TrainerId == request.TrainerId);
+            var trainer = await _context.Trainers.FirstOrDefaultAsync(t => t.UserId == _currentUserService.UserId, cancellationToken);
+            trainerIdFilter = trainer?.Id ?? -1;
+        }
+        else if (_currentUserService.Role == UserRole.Client)
+        {
+            var member = await _context.Members.FirstOrDefaultAsync(m => m.UserId == _currentUserService.UserId, cancellationToken);
+            memberIdFilter = member?.Id ?? -1;
         }
 
-        if (request.MemberId is not null)
+        if (trainerIdFilter is not null)
         {
-            query = query.Where(p => p.MemberId == request.MemberId);
+            query = query.Where(p => p.TrainerId == trainerIdFilter);
+        }
+
+        if (memberIdFilter is not null)
+        {
+            query = query.Where(p => p.MemberId == memberIdFilter);
         }
 
         if (request.IsActive is not null)

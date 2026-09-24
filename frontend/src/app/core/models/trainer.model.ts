@@ -1,5 +1,6 @@
 export interface TrainerListItem {
   id: number;
+  userId: number;
   fullName: string;
   email: string;
   specialization: string;
@@ -11,6 +12,7 @@ export interface TrainerListItem {
 
 export interface TrainerDetail {
   id: number;
+  userId: number;
   firstName: string;
   lastName: string;
   email: string;

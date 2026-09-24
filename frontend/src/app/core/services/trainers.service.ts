@@ -27,6 +27,10 @@ export class TrainersService {
     return this.http.get<TrainerDetail>(`${this.baseUrl}/${id}`);
   }
 
+  getMyProfile(): Observable<TrainerDetail> {
+    return this.http.get<TrainerDetail>(`${this.baseUrl}/me`);
+  }
+
   createTrainer(request: CreateTrainerRequest): Observable<{ id: number }> {
     return this.http.post<{ id: number }>(this.baseUrl, request);
   }
